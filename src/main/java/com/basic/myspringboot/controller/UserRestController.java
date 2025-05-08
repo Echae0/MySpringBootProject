@@ -3,6 +3,7 @@ package com.basic.myspringboot.controller;
 import com.basic.myspringboot.entity.User;
 import com.basic.myspringboot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,16 @@ public class UserRestController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id){
         Optional<User> optionalUser = userRepository.findById(id);
+        //public <U> Optional<U> map(Function<? super T,? extends U> mapper)
+        //Function 의 추상메서드 R apply(T t)
+        ResponseEntity<User> responseEntity = optionalUser
+                .map(user -> ResponseEntity.ok(user)) //User 가 있는 경우 200 status code
+                //.orElse(ResponseEntity.notFound().build()); //User 가 없는 경우 404 status code
+                .orElse(new ResponseEntity("User Not Found", HttpStatus.NOT_FOUND));
+        return responseEntity;
+
+//        return optionalUser.map(ResponseEntity::ok)
+//                .orElse(ResponseEntity.notFound().build());
     }
 
 }

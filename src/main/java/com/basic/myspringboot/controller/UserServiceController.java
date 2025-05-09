@@ -5,6 +5,8 @@ import com.basic.myspringboot.entity.User;
 import com.basic.myspringboot.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,14 +18,10 @@ public class UserServiceController {
     private final UserService userService;
 
     @PostMapping
-    public UserDTO.UserResponse create(@Valid @RequestBody
-                                       UserDTO.UserCreateRequest request) {
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-
-        User savedUser = userService.createUser(user);
-        return new UserDTO.UserResponse(savedUser);
+    public ResponseEntity<UserDTO.UserResponse> create(@Valid @RequestBody
+                                                       UserDTO.UserCreateRequest request) {
+        UserDTO.UserResponse createdUser = userService.createUser(request);
+        return ResponseEntity.ok(createdUser);
     }
 
     @GetMapping
@@ -41,6 +39,25 @@ public class UserServiceController {
     public UserDTO.UserResponse getUserById(@PathVariable Long id) {
         User existUser = userService.getUserById(id);
         return new UserDTO.UserResponse(existUser);
+    }
+
+    @GetMapping("/email/{email}/")
+    public UserDTO.UserResponse getUserByEmail(@PathVariable String email){
+        return new UserDTO.UserResponse(userService.getUserByEmail(email));
+    }
+
+    @PatchMapping("/{email}")
+    public ResponseEntity<UserDTO.UserResponse> updateUser(@PathVariable String email,
+                                                           @Valid @RequestBody UserDTO.UserUpdateRequest useDetail){
+
+        UserDTO.UserResponse updatedUser = userService.updateUserByEmail(email, useDetail);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

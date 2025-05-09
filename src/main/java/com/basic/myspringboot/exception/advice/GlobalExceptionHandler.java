@@ -26,28 +26,30 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
     }
-    
+
     //입력항목 검증할때 오류 발생할때 동작하는 메서드
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        
+        ex.getBindingResult()
+                .getAllErrors()
+                .forEach((error) -> {
+                    String fieldName = ((FieldError) error).getField();
+                    String errorMessage = error.getDefaultMessage();
+                    errors.put(fieldName, errorMessage);
+                });
+
         ValidationErrorResponse response = new ValidationErrorResponse(
                 400,
-                "Validation Failed",
+                "입력항목 검증 오류",
                 LocalDateTime.now(),
                 errors
         );
-        
+        //badRequest() 400
         return ResponseEntity.badRequest().body(response);
     }
-    
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -56,7 +58,7 @@ public class GlobalExceptionHandler {
         private String message;
         private LocalDateTime timestamp;
     }
-    
+
     @Getter
     @Setter
     @AllArgsConstructor

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private String name;
@@ -24,5 +24,6 @@ public class UserInfo {
     private String password;
 
     @Column(nullable = false)
+    //Admin, User
     private String roles;
 }
